@@ -1,0 +1,58 @@
+version: '3.7'
+services: 
+  mysql:
+    image: mariadb
+    container_name: mariadb
+    volumes: 
+        - mariadb:/var/lib/mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: HatsuneMiku01
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    ports: 
+        - 3306:3306
+    restart: always
+    networks: 
+        - wp_network
+  wordpress:
+    image: wordpress:php7.3-fpm-alpine
+    container_name: wordpress
+    volumes: 
+        - wordpress:/var/www/html
+    depends_on: 
+        - mysql
+    environment: 
+      WORDPRESS_DB_HOST: mysql
+      MYSQL_ROOT_PASSWORD: HatsuneMiku01
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_TABLE_PREFIX: wp_
+    links: 
+        - mysql
+    restart: always
+    networks: 
+        - wp_network
+  nginx: 
+    image: nginx
+    container_name: nginx
+    volumes: 
+        - wordpress:/var/www/html
+        - nginx:/etc/nginx/conf.d
+    ports: 
+        - 80:80
+    links :
+        - wordpress
+    networks: 
+        - wp_network
+networks:
+    wp_network:
+        name: wp_network
+volumes: 
+    wordpress:
+        external: true
+    mariadb:
+        external: true
+    nginx:
+        external: true
