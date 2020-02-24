@@ -35,13 +35,14 @@ services:
     networks: 
         - wp_network
   nginx: 
-    image: nginx
+    build: .
+    image: nginx:wp-php7.3
     container_name: nginx
     volumes: 
         - wordpress:/var/www/html
-        - nginx:/etc/nginx/conf.d
+        - nginx-wp:/etc/nginx/conf.d
     ports: 
-        - 80:80
+        - 8080:80
     links :
         - wordpress
     networks: 
@@ -54,5 +55,5 @@ volumes:
         external: true
     mariadb:
         external: true
-    nginx:
+    nginx-wp:
         external: true
